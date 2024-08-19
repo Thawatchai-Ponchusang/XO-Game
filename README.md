@@ -94,37 +94,62 @@ function fetchGameHistory() {
     get(gamesRef).then((snapshot) => {
         if (snapshot.exists()) {
             let gameIndex = 1;
+
+            // สร้าง table
+            const table = document.createElement('table');
+            table.style.width = '100%';
+            table.classList = 'table';
+            table.style.borderCollapse = 'collapse';
+            table.setAttribute('border', '1');
+
             snapshot.forEach((childSnapshot) => {
                 
                 // ดึงค่าจากแต่ละเกม
                 const gameMove = childSnapshot.child("moves").val();
                 const gameSize = childSnapshot.child("size").val();
-                const gameDiv = document.createElement('div');
-                //const gameWinner = childSnapshot.child("winner").val();
 
-                // สร้าง element เพื่อแสดงข้อมูล
-                const gameElement = document.createElement('div');
-                gameElement.style.display = 'inline-block';
-                gameElement.style.fontWeight = 'bold';
-                gameElement.textContent = `เกมที่ ${gameIndex} ขนาดตาราง: ${gameSize} x ${gameSize}`;
+                // สร้างแถวใหม่ใน table
+                const row = document.createElement('tr');
+
+                // สร้างเซลล์แรกในแถวสำหรับแสดงข้อมูลเกม
+                const gameElementCell = document.createElement('td');
+                gameElementCell.style.fontWeight = 'bold';
+                gameElementCell.textContent = `เกมที่ ${gameIndex} ขนาดตาราง: ${gameSize} x ${gameSize}`;
                 
+                // สร้างเซลล์ที่สองในแถวสำหรับปุ่ม replay
+                const gameButtonCell = document.createElement('td');
                 const gameButton = document.createElement('button');
                 gameButton.textContent = 'Replay';
+                gameButton.classList.add('btn', 'btn-primary', 'button-history');
                 gameButton.addEventListener('click', () => {
-                    console.log(gameMove); // ดูหรือทำงานกับ moves เมื่อกดปุ่ม
+                    console.log(gameMove);
+                    replayGame(gameMove, gameSize);
                 });
 
-                // เพิ่ม element ไปยัง document
-                gameButton.addEventListener('click', () => replayGame(gameMove, gameSize));
-                gameButton.classList.add('btn', 'btn-primary', 'button-history');
-                gameButton.style.display = 'inline-block';
+                gameButtonCell.appendChild(gameButton);
 
-                historyDiv.appendChild(gameElement);
-                historyDiv.appendChild(gameButton);
-                historyDiv.appendChild(gameDiv);
+                // เพิ่มเซลล์ลงในแถว
+                row.appendChild(gameElementCell);
+                row.appendChild(gameButtonCell);
+
+                // เพิ่มแถวลงในตาราง
+                table.appendChild(row);
 
                 gameIndex++;
             });
+
+            // สร้าง wrapper สำหรับ table เพื่อให้สามารถ scroll ได้
+            const wrapperDiv = document.createElement('div');
+            wrapperDiv.style.maxHeight = '300px';
+            wrapperDiv.style.overflowY = 'auto';
+            wrapperDiv.style.border = '1px solid #ddd';
+            
+            // เพิ่มตารางลงใน wrapper
+            wrapperDiv.appendChild(table);
+
+            // เพิ่ม wrapper ลงใน historyDiv
+            historyDiv.appendChild(wrapperDiv);
+
         } else {
             console.log("No data available");
         }
