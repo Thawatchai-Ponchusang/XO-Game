@@ -62,6 +62,7 @@ function showPopup(message) {
     document.getElementById('popupOverlay').style.display = 'block';
 }
 
+// Handle a move
 function makeMove(row, col) {
     if (board[row][col] === '' && !gameEnd) {
         board[row][col] = currentPlayer;
@@ -78,23 +79,6 @@ function makeMove(row, col) {
         }
     }
 }
-
-// Handle a move
-// function makeMove(row, col) {
-//     if (board[row][col] === '' && !gameEnd) {
-//         board[row][col] = currentPlayer;
-//         moveHistory.push({player: currentPlayer, row, col});
-//         updateBoard(boardSize);
-//         if (checkWinner()) {
-//             alert(`${currentPlayer} wins!`);
-//             whoWin = currentPlayer;
-//             saveGameToFirebase();
-//             initializeBoard(boardSize);
-//         } else {
-//             currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-//         }
-//     }
-// }
 
 // Update the board display
 function updateBoard(boardSize) {
