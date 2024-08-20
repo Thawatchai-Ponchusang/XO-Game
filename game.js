@@ -45,6 +45,8 @@ function initializeBoard(size) {
     gameBoard.style.gridTemplateColumns = `repeat(${size}, auto)`;
     gameBoard.innerHTML = '';
     moveHistory = [];
+    currentPlayer = 'X';
+    gameEnd = false;
 
     for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
@@ -73,12 +75,13 @@ function makeMove(row, col) {
 
         if (result === 'winner') {
             showPopup(`${currentPlayer} Wins!`);
-            whoWin = currentPlayer;
+            whoWin = currentPlayer + ' win';
             saveGameToFirebase();
             gameEnd = true;
             initializeBoard(boardSize);
         } else if (result === 'draw') {
             showPopup(`Draw!!`);
+            whoWin = 'Draw'
             gameEnd = true;
             saveGameToFirebase();
             initializeBoard(boardSize);
@@ -177,6 +180,7 @@ function fetchGameHistory() {
                 // ดึงค่าจากแต่ละเกม
                 const gameMove = childSnapshot.child("moves").val();
                 const gameSize = childSnapshot.child("size").val();
+                const gameWin = childSnapshot.child("winner").val();
 
                 // สร้างแถวใหม่ใน table
                 const row = document.createElement('tr');
@@ -184,7 +188,7 @@ function fetchGameHistory() {
                 // สร้างเซลล์แรกในแถวสำหรับแสดงข้อมูลเกม
                 const gameElementCell = document.createElement('td');
                 gameElementCell.style.fontWeight = 'bold';
-                gameElementCell.textContent = `เกมที่ ${gameIndex} ขนาดตาราง: ${gameSize} x ${gameSize}`;
+                gameElementCell.textContent = `เกมที่ ${gameIndex} ผลแพ้ชนะ: ${gameWin} ขนาดตาราง: ${gameSize} x ${gameSize}`;
                 
                 // สร้างเซลล์ที่สองในแถวสำหรับปุ่ม replay
                 const gameButtonCell = document.createElement('td');
