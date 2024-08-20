@@ -64,10 +64,10 @@ function showPopup(message) {
 
 // Handle a move
 function makeMove(row, col) {
-    if (board[row][col] === '' && !gameEnd) {  // เช็คว่าเซลล์ว่างและเกมยังไม่จบ
-        board[row][col] = currentPlayer;  // ตั้งค่าผู้เล่นปัจจุบันในเซลล์
-        moveHistory.push({player: currentPlayer, row, col});  // บันทึกการเคลื่อนไหว
-        updateBoard(boardSize);  // อัปเดตกระดาน
+    if (board[row][col] === '' && !gameEnd) {
+        board[row][col] = currentPlayer;
+        moveHistory.push({player: currentPlayer, row, col});
+        updateBoard(boardSize);
         
         const result = checkWinner();
 
@@ -87,25 +87,6 @@ function makeMove(row, col) {
         }
     }
 }
-
-// Handle a move
-// function makeMove(row, col) {
-//     if (board[row][col] === '' && !gameEnd) {
-//         board[row][col] = currentPlayer;
-//         moveHistory.push({player: currentPlayer, row, col});
-//         updateBoard(boardSize);
-//         if (checkWinner()) {
-//             showPopup(`${currentPlayer} Wins!`);
-//             whoWin = currentPlayer;
-//             saveGameToFirebase();
-//             currentPlayer = 'X'
-//             initializeBoard(boardSize);
-//         } else {
-//             currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-//             console.log("draw");
-//         }
-//     }
-// }
 
 // Update the board display
 function updateBoard(boardSize) {
