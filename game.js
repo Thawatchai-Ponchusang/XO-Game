@@ -2,13 +2,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/fireba
 import { getDatabase, ref, set, get, push} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
 // Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyBGgQwMrzhEIGCHLsbQir6BEm6QksMosuA",
-    authDomain: "tictactoe-3f6e4.firebaseapp.com",
-    projectId: "tictactoe-3f6e4",
-    storageBucket: "tictactoe-3f6e4.appspot.com",
-    messagingSenderId: "420381249883",
-    appId: "1:420381249883:web:4c8f107f14d3d0b1a3ca7e",
-    databaseURL: "https://tictactoe-3f6e4-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    apiKey: "***********************",
+    authDomain: "***********************",
+    projectId: "***********************",
+    storageBucket: "***********************",
+    messagingSenderId: "***********************",
+    appId: "***********************",
+    databaseURL: "***********************"
 };
 
 // Initialize Firebase
