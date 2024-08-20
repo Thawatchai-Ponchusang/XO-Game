@@ -64,21 +64,48 @@ function showPopup(message) {
 
 // Handle a move
 function makeMove(row, col) {
-    if (board[row][col] === '' && !gameEnd) {
-        board[row][col] = currentPlayer;
-        moveHistory.push({player: currentPlayer, row, col});
-        updateBoard(boardSize);
-        if (checkWinner()) {
-            showPopup(`${currentPlayer} wins!`);
+    if (board[row][col] === '' && !gameEnd) {  // เช็คว่าเซลล์ว่างและเกมยังไม่จบ
+        board[row][col] = currentPlayer;  // ตั้งค่าผู้เล่นปัจจุบันในเซลล์
+        moveHistory.push({player: currentPlayer, row, col});  // บันทึกการเคลื่อนไหว
+        updateBoard(boardSize);  // อัปเดตกระดาน
+        
+        const result = checkWinner();
+
+        if (result === 'winner') {
+            showPopup(`${currentPlayer} Wins!`);
             whoWin = currentPlayer;
             saveGameToFirebase();
-            currentPlayer = 'X'
+            gameEnd = true;
+            initializeBoard(boardSize);
+        } else if (result === 'draw') {
+            showPopup(`Draw!!`);
+            gameEnd = true;
+            saveGameToFirebase();
             initializeBoard(boardSize);
         } else {
             currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
         }
     }
 }
+
+// Handle a move
+// function makeMove(row, col) {
+//     if (board[row][col] === '' && !gameEnd) {
+//         board[row][col] = currentPlayer;
+//         moveHistory.push({player: currentPlayer, row, col});
+//         updateBoard(boardSize);
+//         if (checkWinner()) {
+//             showPopup(`${currentPlayer} Wins!`);
+//             whoWin = currentPlayer;
+//             saveGameToFirebase();
+//             currentPlayer = 'X'
+//             initializeBoard(boardSize);
+//         } else {
+//             currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+//             console.log("draw");
+//         }
+//     }
+// }
 
 // Update the board display
 function updateBoard(boardSize) {
@@ -92,28 +119,44 @@ function updateBoard(boardSize) {
     }
 }
 
-// Check for a winner
+// Check for a winner or a draw
 function checkWinner() {
+    let boardFull = true;
+
     // Check rows
     for (let i = 0; i < boardSize; i++) {
         if (board[i].every(cell => cell === currentPlayer)) {
-            return true;
+            return 'winner';
         }
     }
 
     // Check columns
     for (let i = 0; i < boardSize; i++) {
         if (board.map(row => row[i]).every(cell => cell === currentPlayer)) {
-            return true;
+            return 'winner';
         }
     }
 
     // Check diagonals
     if (board.map((row, i) => row[i]).every(cell => cell === currentPlayer)) {
-        return true;
+        return 'winner';
     }
     if (board.map((row, i) => row[boardSize - i - 1]).every(cell => cell === currentPlayer)) {
-        return true;
+        return 'winner';
+    }
+
+    // Check if the board is full
+    for (let i = 0; i < boardSize; i++) {
+        for (let j = 0; j < boardSize; j++) {
+            if (board[i][j] === '') {
+                boardFull = false;
+            }
+        }
+    }
+
+    console.log(boardFull);
+    if (boardFull) {
+        return 'draw';
     }
 
     return false;
@@ -203,51 +246,6 @@ function fetchGameHistory() {
         console.error("Error fetching game data: ", error);
     });
 }
-
-
-// function fetchGameHistory() {
-//     const gamesRef = ref(db, 'games');
-//     get(gamesRef).then((snapshot) => {
-//         if (snapshot.exists()) {
-//             let gameIndex = 1;
-//             snapshot.forEach((childSnapshot) => {
-                
-//                 // ดึงค่าจากแต่ละเกม
-//                 const gameMove = childSnapshot.child("moves").val();
-//                 const gameSize = childSnapshot.child("size").val();
-//                 const gameDiv = document.createElement('div');
-//                 //const gameWinner = childSnapshot.child("winner").val();
-
-//                 // สร้าง element เพื่อแสดงข้อมูล
-//                 const gameElement = document.createElement('div');
-//                 gameElement.style.display = 'inline-block';
-//                 gameElement.style.fontWeight = 'bold';
-//                 gameElement.textContent = `เกมที่ ${gameIndex} ขนาดตาราง: ${gameSize} x ${gameSize}`;
-                
-//                 const gameButton = document.createElement('button');
-//                 gameButton.textContent = 'Replay';
-//                 gameButton.addEventListener('click', () => {
-//                     console.log(gameMove); // ดูหรือทำงานกับ moves เมื่อกดปุ่ม
-//                 });
-
-//                 // เพิ่ม element ไปยัง document
-//                 gameButton.addEventListener('click', () => replayGame(gameMove, gameSize));
-//                 gameButton.classList.add('btn', 'btn-primary', 'button-history');
-//                 gameButton.style.display = 'inline-block';
-
-//                 historyDiv.appendChild(gameElement);
-//                 historyDiv.appendChild(gameButton);
-//                 historyDiv.appendChild(gameDiv);
-
-//                 gameIndex++;
-//             });
-//         } else {
-//             console.log("No data available");
-//         }
-//     }).catch((error) => {
-//         console.error("Error fetching game data: ", error);
-//     });
-// }
 
 // Replay a game from history
 function replayGame(moves, size) {
